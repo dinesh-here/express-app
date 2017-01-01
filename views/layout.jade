@@ -1,0 +1,15 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet',href='./lib/materialize.min.css')
+    script(src='./lib/angular.js')
+  body
+    include nav
+    if (error && error.length > 0)
+      div(class="card-panel teal lighten-2")
+        h2=error
+    else
+    block content
+  script(src='https://code.jquery.com/jquery-1.12.4.min.js')
+  script(src='./lib/materialize.min.js')

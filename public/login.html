@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" href="./lib/materialize.min.css">
+  <style>
+    .container-register{
+      max-width: 800px;
+      margin: 0 auto;
+    }
+  </style>
+<script src="./lib/angular.js"></script>
+</head>
+<body ng-app="loginApp" ng-controller="postCtl">
+  <nav>
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo">MEAN App</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="login.html">Login</a></li>
+        <li><a href="index.html">Sign Up</a></li>
+        <li><a href="collapsible.html">View All</a></li>
+      </ul>
+    </div>
+  </nav>
+  <div class="container-register">
+    <div class="row">
+      <form class="col s12" ng-submit="submitForm()" method="post">
+         <div class="input-field col s12">
+            <input id="first_name" type="text" class="validate" ng-model="user.name" required>
+            <label for="first_name">Name</label>
+          </div>
+          <div class="input-field col s12">
+            <input id="password" type="password" class="validate" ng-model="user.pass" required>
+            <label for="password">Password</label>
+          </div>
+          <button type="submit" class="btn waves-effect waves-light">Login
+  </button>
+      </form>
+    </div>
+    <div class="progress hide">
+      <div class="indeterminate"></div>
+  </div>
+  </div>
+</body>
+<script>
+  var postApp = angular.module('loginApp', []);
+    // Controller function and passing $http service and $scope var.
+    postApp.controller('postCtl', function($scope, $http) {
+      // create a blank object to handle form data.
+        $scope.user = {};
+      // calling our submit function.
+        $scope.submitForm = function() {
+        // Posting data to php file
+        $(".progress").removeClass('hide');
+        $http({
+          method  : 'POST',
+          url     : 'http://localhost:3002/loginService',
+          data    : $scope.user, //forms user object
+          headers :  {'Content-Type': 'application/json'}
+         })
+          .success(function(data) {
+            $(".progress").addClass('hide');
+            if (data.errors) {
+              // Showing errors.
+               Materialize.toast(data, 3000, 'rounded')
+              console.log("error");
+              console.log(errors);
+              } else {
+               Materialize.toast(data, 3000, 'rounded');
+            }
+          });
+        };
+    });
+</script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+  crossorigin="anonymous"></script>
+	<script src="./lib/materialize.min.js"></script>
+</html>

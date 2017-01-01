@@ -1,0 +1,14 @@
+extends layout
+
+body(ng-app="postApp",ng-controller="postCtl")
+	block content
+		.container-register
+			.row
+				form(class="col s6",action="/loginService",method="post")
+					.input-field.col.s12
+						input(id="first_name",type="text",class="validate",name="name",required)
+						label(for="first_name") Name
+					.input-field.col.s12
+						input(id="password",type="password",class="validate",required,name="pass")
+						label(for="password") Password
+					input(type="submit",class="btn waves-effect waves-light",value="Login")
