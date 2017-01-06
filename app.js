@@ -20,7 +20,7 @@ var User = mongoose.model('student', userSchema);*/
 app.use(express.static("public"));
 app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({ secret: 'SD123890' }));
+app.use(session({ secret: 'SD123890',cookie:{maxAge:60000}}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.set('views', __dirname + '/views');
@@ -137,8 +137,10 @@ passport.use('local-login', new LocalStrategy({
 
 app.post('/loginService',passport.authenticate('local-login', {
     successRedirect : '/getTab', // redirect to the secure profile section
-    failureRedirect : '/' // redirect back to the signup page if there is an error
+    failureRedirect : '/', // redirect back to the signup page if there is an error
+    failureFlash : true // 
 }));
+
 app.listen(3002,function(){
   console.log("connecting..");
   mongoose.connect('mongodb://localhost/students');
