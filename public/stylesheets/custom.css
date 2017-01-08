@@ -1,0 +1,23 @@
+.card-content p{
+	margin: 0;
+}
+.side-navWrap{
+	border-right: 1px solid #000;
+	margin-right: 10px;
+	position: fixed;
+	width: 23%;
+	height: 100%
+}
+.addnewtask{
+	margin-bottom: 50px;
+}
+.calender-view-wrap{
+	padding: 20px 10px;
+}
+.textcls{
+	width: 100%;
+	height: 80px;
+}
+.addforclose{
+	margin: 0 10px;
+}

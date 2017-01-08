@@ -6,7 +6,7 @@ body(ng-app="postApp",ng-controller="postCtl")
 			.row
 				form(class="col s12",action="/postDB",method="post")
 					.input-field.col.s12
-						input(id="first_name",type="text",class="validate",name="name",required)
+						input(id="first_name",type="text",class="validate",autocomplete="off",name="name",required)
 						label(for="first_name") Name
 					.input-field.col.s12
 						input(id="email",type="email",class="validate",required,name="email")

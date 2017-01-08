@@ -1,0 +1,14 @@
+extends layout
+
+body
+	block content
+		div(class="row")
+			div(class="col s3",id="side-nav")
+				div(class="side-navWrap")
+					div(class="side-nav-list")
+						h5 Welcome #{userName}
+						ul
+							li: a About
+							li: a Home
+			div(class="col s9")
+				block dashboardData

@@ -1,6 +1,10 @@
-nav
-	.nav-wrapper
-		a(class="brand-logo") Menu
-		ul(class="right hide-on-med-and-down")
-			li: a(href="/register") Register
-			li: a(href="/") Login
+.navbar-fixed
+	nav
+		.nav-wrapper
+			a(class="brand-logo") Menu
+			ul(class="right hide-on-med-and-down")
+				if(user)
+					li: a(href="/logout") Logout
+				else
+					li: a(href="/register") Register
+					li: a(href="/") Login

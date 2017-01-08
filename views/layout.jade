@@ -3,16 +3,20 @@ html
   head
     title= title
     link(rel='stylesheet',href='./lib/materialize.min.css')
+    link(rel='stylesheet',href='./stylesheets/custom.css')
+    link(href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css", rel="stylesheet")
+    script(src='./lib/jquery-1.12.3.js')
     script(src='./lib/angular.js')
+    block headscript
   body
     include nav
     if (error && error.length > 0)
       div(class="container")
         div(class="row")
           div(class="col s6 offset-s4")
-            div(class="card-panel teal")
-              span=error
+            div(class="card-panel red lighten-5",id="card-alert")
+              div(class="card-content red-text")
+                p=error
     else
     block content
-  script(src='https://code.jquery.com/jquery-1.12.4.min.js')
   script(src='./lib/materialize.min.js')

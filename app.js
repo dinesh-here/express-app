@@ -8,6 +8,7 @@ var passport = require("passport");
 var LocalStrategy = require('passport-local').Strategy;
 var session = require('express-session');
 var User= require('./modules/db_model');
+var task_history= require('./modules/task_history');
 var Schema = mongoose.Schema;
 
 /*var userSchema = new Schema({
@@ -20,7 +21,7 @@ var User = mongoose.model('student', userSchema);*/
 app.use(express.static("public"));
 app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({ secret: 'SD123890',cookie:{maxAge:60000}}));
+app.use(session({ secret: 'SD123890',cookie:{maxAge:600000}}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.set('views', __dirname + '/views');
@@ -30,7 +31,11 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
-
+app.get("*",function(req,res,next){
+    // put user into res.locals for easy access from templates
+  app.locals.user = req.user || null;
+  next();
+});
  passport.serializeUser(function(User, done) {
       done(null, User.id);
   });
@@ -48,7 +53,7 @@ app.get("/",function(req,res){
 });
 app.get("/register",function(req,res){
   console.log("Res");
-     res.render('index.jade', {title: 'Hello ',error:'yes'});
+     res.render('index.jade');
 });
 
 app.get("/getTab",isLoggedIn,function (req,res) {
@@ -56,10 +61,30 @@ app.get("/getTab",isLoggedIn,function (req,res) {
       if(err){
         console.log(err);
       }else{
-        res.send(users);
-      }
+        res.render("calenderView.jade",{model:users,userName:req.user.name});
+      };
   });
 });  
+app.get("/getTaskList",isLoggedIn,function(req,res){
+  task_history.find({uname:req.user.name},function(err,docs){
+    var events=[];
+     if (!err){ 
+      docs.forEach(function(el){
+        events.push({"title":el.subid+" - "+el.tasktype,start:el.date});
+      })
+       res.send(events);
+    } 
+    else{
+      console.log(err);
+    }
+  });
+  
+});
+app.get("/logout",function(req,res){
+  req.session.destroy();
+req.logout(); 
+res.redirect('/');
+});
 app.post('/postDB', function (req, resp) {
   console.log(req.body);
 
@@ -77,6 +102,25 @@ app.post('/postDB', function (req, resp) {
     }
   });
 });
+app.post('/addNewTask',isLoggedIn,function(req,resp){
+  console.log(req.body);
+  var newTask=new task_history();
+  newTask.subid=req.body.subid;
+  newTask.tasktype=req.body.tasktype;
+  newTask.date=req.body.date;
+  newTask.notes=req.body.notes;
+  newTask.mins=req.body.mins;
+  newTask.uname=req.user.name;
+  newTask.save(function(err) {
+    if (err){
+      console.log("Error on save");
+      console.log(err);
+    }else{
+      console.log('User saved successfully!');
+      resp.send('Added');
+    }
+  });
+});
 function isLoggedIn(req, res, next) {
 
     // if user is authenticated in the session, carry on 
@@ -84,7 +128,7 @@ function isLoggedIn(req, res, next) {
         return next();
 
     // if they aren't redirect them to the home page
-    res.redirect('/');
+    res.render('login.jade', {error:'Please Login to view this page'});
 }
 passport.use('local-login', new LocalStrategy({
     usernameField : 'name',
@@ -118,7 +162,7 @@ passport.use('local-login', new LocalStrategy({
     if(err){
       resp.send("<span style='color:red;'>Someting went wrong please connect admin</span>");
     }else{
-      console.log(users);
+
       if(users.length>0){
            var options = {
               maxAge: 1000 * 60 * 15, // would expire after 15 minutes

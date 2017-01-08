@@ -1,0 +1,30 @@
+extends dashboard
+
+block headscript
+	link(rel='stylesheet',href='./lib/fullcalendar.min.css')
+body
+	block dashboardData
+		.calender-view-wrap
+			.modal#modal1
+				.modal-content
+					form(class="col s12 addnewform",method="post")
+						.input-field.col.s12
+							input(id="subid",type="text",class="validate",required,name="subid")
+							label(for="subid") SubID
+						.input-field.col.s12
+							input(id="tasktype",type="text",class="validate",required,name="tasktype")
+							label(for="tasktype") task type
+						.input-field.col.s12
+							input(id="taskdate",type="date",class="validate",required,name="taskdate")
+						.input-field.col.s12
+							input(id="notes",type="textarea",class="validate textcls",required,name="notes",length="120")
+						.input-field.col.s12
+							input(id="mins",type="number",class="validate",required,name="mins")
+							label(for="mins") mins
+						input(type="submit",class="btn waves-effect waves-light",value="Submit")
+				.modal-footer
+			.addnewtask.btn.waves-effect.waves-ligh(data-target="modal1") Add New
+			div(id='calendar')
+			script(src="./javascripts/moment.min.js")
+			script(src="./lib/fullcalendar.min.js")
+			script(src="./javascripts/custom.js")
