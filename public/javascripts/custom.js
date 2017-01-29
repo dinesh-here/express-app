@@ -1,7 +1,13 @@
 $(function(){
 $('#calendar').fullCalendar({
-    weekends: false,
-    events: '/getTaskList'
+    events: '/getTaskList',
+      eventClick: function(event) {
+      	console.log(event.id);
+        var scope = angular.element(document.getElementById("calenderView")).scope();
+        scope.$apply(function () {
+          scope.getTaskByID(event.id);
+        });
+      }
 });
  $('.modal').modal({
       dismissible: true, // Modal can be dismissed by clicking outside of the modal
@@ -13,32 +19,72 @@ $('#calendar').fullCalendar({
     }
   );
  $(".addforclose").click(function () {
- 	 $('#modal1').modal('close');
- });
- $(".addnewform").submit(function(){
- 	console.log("Subn");
- 	var req_obj={
-
- 	}
- 	req_obj.subid=$("#subid").val();
- 	req_obj.tasktype=$("#tasktype").val();
- 	req_obj.date=$("#taskdate").val();
- 	req_obj.notes=$("#notes").val();
- 	req_obj.mins=$("#mins").val();
- 	console.log(req_obj);
- 	$.ajax({
-	    type: 'POST',
-	    url: '/addNewTask',
-	    dataType: 'text',
-	    data: JSON.stringify(req_obj),
-	    success: function(data) { 
-	     Materialize.toast('Added', 4000); 
-	     $('#modal1').modal('close');
-	     $('#calendar').fullCalendar( 'refetchEvents' );
-	 	},
-	    contentType: "application/json"
-	});
- 	return false;
+   $('#modal1').modal('close');
  });
 
 });
+ 
+var formApp = angular.module('taskApp', []);
+formApp.controller("formController",['$scope', '$http','$filter', function($scope, $http,$filter) {
+   $scope.formData = {};
+    $scope.updateData={};
+   $scope.newForm=function(){
+     $scope.formData = {};
+     document.getElementById("taskdate").valueAsDate = new Date();
+     $('#modal1').modal('open');
+   };
+   $scope.submit_task=function(){
+    $scope.tmpDate=new Date(angular.element("#taskdate").val());
+      $scope.formData.date=$filter('date')($scope.tmpDate, "MM/dd/yyyy");
+      $http.post("/addNewTask",$scope.formData).then(function(res){
+         Materialize.toast(res.data, 4000); 
+       $('#modal1').modal('close');
+       $('#calendar').fullCalendar( 'refetchEvents' );
+      }, function(err){
+         Materialize.toast(err, 4000); 
+       $('#modal1').modal('close');
+       $('#calendar').fullCalendar( 'refetchEvents' );
+        console.log(err);
+      });
+   };
+   $scope.deleteById=function(){
+     $http.delete("/deleteById/"+$scope.updateData._id+"/remove").then(function(res){
+       Materialize.toast(res.data, 4000); 
+       $('#modal2').modal('close');
+       $('#calendar').fullCalendar( 'refetchEvents' );
+     }, function(err){
+        Materialize.toast(err, 4000); 
+       $('#modal2').modal('close');
+        console.log(err);
+     });
+   };
+   $scope.update_task=function(){
+     console.log($scope.updateData);
+      $scope.tmpDate=new Date(angular.element("#utaskdate").val());
+      $scope.updateData.date=$filter('date')($scope.tmpDate, "MM/dd/yyyy");
+     $http.post("/updateTask",$scope.updateData).then(function(res){
+       Materialize.toast(res.data, 4000); 
+       $('#modal2').modal('close');
+       $('#calendar').fullCalendar( 'refetchEvents' );
+     }, function(err){
+        Materialize.toast(err, 4000); 
+       $('#modal2').modal('close');
+        console.log(err);
+     });
+   };
+   $scope.getTaskByID=function(did){
+     $http.get('/gettaskbyid?did='+did).then(function(res){
+       console.log(res);
+       $scope.updateData=res.data;
+       var dafil=new Date($scope.updateData.date);
+       var dateString=dafil.getFullYear()+"-"+(("0" + (dafil.getMonth() + 1)).slice(-2))+"-"+(("0" + dafil.getDate()).slice(-2));
+       $(".updatefil").val(dateString);
+        $('#modal2').modal('open');
+        setTimeout(function(){
+          Materialize.updateTextFields();          
+        }, 100);
+     }, function(err){
+       console.log(err);
+     });
+   };
+}]);

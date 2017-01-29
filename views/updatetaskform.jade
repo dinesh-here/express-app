@@ -1,0 +1,26 @@
+button(ng-click="deleteById()",class="btn waves-effect waves-light") Delete
+form(class="col s12 updateForm",method="post",ng-submit="update_task()")
+	.input-field.col.s12
+		input(id="usubid",type="text",class="validate",required,name="usubid",ng-model="updateData.subid",autocomplete="off")
+		label(for="usubid") SubID
+	.input-field.col.s12
+		select(id="utasktype",name="utasktype",ng-model="updateData.tasktype")
+			option(value="ticket") Ticket
+			option(value="email") Email
+	.input-field.col.s12
+		input(id="utaskdate",type="date",class="validate updatefil",required,name="utaskdate")
+	.input-field.col.s12
+		input(id="ufirmurl",type="url",class="validate",required,name="ufirmurl",ng-model="updateData.furl")
+		label(for="ufirmurl") Firm URL
+	.input-field.col.s12
+		input(id="ufirmname",type="text",class="validate",required,name="ufirmname",ng-model="updateData.fname",autocomplete="off")
+		label(for="ufirmname") Firm Name
+	.input-field.col.s12
+		input(id="udays",type="number",class="validate",required,name="udays",value=0,ng-model="updateData.days")
+		label(for="udays") days
+	.input-field.col.s12
+		input(id="umins",type="number",class="validate",required,name="umins",ng-model="updateData.mins")
+		label(for="umins") mins
+	.input-field.col.s12
+		input(id="unotes",type="textarea",class="validate textcls",required,name="unotes",length="120",ng-model="updateData.notes")
+	input(type="submit",class="btn waves-effect waves-light",value="Update")

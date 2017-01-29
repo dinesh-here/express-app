@@ -5,7 +5,8 @@ var crypto = require('crypto');
 var userSchema = new Schema({
    name: String,
   password: { type: String, required: true },
-  email: String
+  email: String,
+  adminUser:Number
 },{ collection : 'stu_info' });
 
 userSchema.methods.encpass=function(pass){

@@ -11,13 +11,6 @@ var User= require('./modules/db_model');
 var task_history= require('./modules/task_history');
 var Schema = mongoose.Schema;
 
-/*var userSchema = new Schema({
-   name: String,
-  password: { type: String, required: true },
-  email: String
-},{ collection : 'stu_info' });
-
-var User = mongoose.model('student', userSchema);*/
 app.use(express.static("public"));
 app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -26,11 +19,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.set('views', __dirname + '/views');
 
-app.use(function(req, res, next) {
+/*app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
-});
+});*/
+
 app.get("*",function(req,res,next){
     // put user into res.locals for easy access from templates
   app.locals.user = req.user || null;
@@ -57,20 +51,16 @@ app.get("/register",function(req,res){
 });
 
 app.get("/getTab",isLoggedIn,function (req,res) {
-  User.find({},function(err,users){
-      if(err){
-        console.log(err);
-      }else{
-        res.render("calenderView.jade",{model:users,userName:req.user.name});
-      };
-  });
+    var today=new Date();
+    today=(today.getMonth() + 1) + '/' + today.getDate() + '/' +  today.getFullYear();
+        res.render("calenderView.jade",{user:req.user,date:today});
 });  
 app.get("/getTaskList",isLoggedIn,function(req,res){
   task_history.find({uname:req.user.name},function(err,docs){
     var events=[];
      if (!err){ 
       docs.forEach(function(el){
-        events.push({"title":el.subid+" - "+el.tasktype,start:el.date});
+        events.push({"title":el.subid+" - "+el.tasktype,start:el.date,"id":el._id});
       })
        res.send(events);
     } 
@@ -78,7 +68,15 @@ app.get("/getTaskList",isLoggedIn,function(req,res){
       console.log(err);
     }
   });
-  
+});
+app.get("/gettaskbyid",isLoggedIn,function(req,res){
+    task_history.findById(req.query.did,function(err,doc){
+      if(err){
+        res.send("Error");
+      }else{
+        res.send(doc);
+      }
+    })
 });
 app.get("/logout",function(req,res){
   req.session.destroy();
@@ -86,12 +84,11 @@ req.logout();
 res.redirect('/');
 });
 app.post('/postDB', function (req, resp) {
-  console.log(req.body);
-
   var newUser=new User();
       newUser.name=req.body.name;
     newUser.password=newUser.encpass(req.body.pass);
     newUser.email=req.body.email;
+    newUser.adminUser=0;
   newUser.save(function(err) {
     if (err){
       console.log("Error on save");
@@ -103,30 +100,92 @@ app.post('/postDB', function (req, resp) {
   });
 });
 app.post('/addNewTask',isLoggedIn,function(req,resp){
-  console.log(req.body);
   var newTask=new task_history();
   newTask.subid=req.body.subid;
   newTask.tasktype=req.body.tasktype;
+  newTask.furl=req.body.furl;
+  newTask.fname=req.body.fname;
   newTask.date=req.body.date;
   newTask.notes=req.body.notes;
   newTask.mins=req.body.mins;
   newTask.uname=req.user.name;
+  newTask.days=req.body.days;
   newTask.save(function(err) {
     if (err){
       console.log("Error on save");
       console.log(err);
+       resp.status(500).send('Something broke!')
     }else{
-      console.log('User saved successfully!');
+      console.log('Task Added!');
       resp.send('Added');
     }
   });
 });
+app.post("/updateTask",isLoggedIn,function(req,res){
+   body = req.body;
+   //console.log(req.body);
+  task_history.findById(req.body._id, function(error, task) {
+      if(!task) {
+        return res.status(404).json({
+          message: 'Course with id ' + id + ' can not be found.'
+        });
+      }else{
+        if(task.uname===req.user.name){
+          var newTask={};
+          newTask.subid=req.body.subid;
+          newTask.tasktype=req.body.tasktype;
+          newTask.furl=req.body.furl;
+          newTask.fname=req.body.fname;
+          newTask.date=req.body.date;
+          newTask.notes=req.body.notes;
+          newTask.mins=req.body.mins;
+          newTask.days=req.body.days;
+           task.update(newTask, function(error, utask) {
+            if(error){
+              //console.log(error);
+              return res.status(404).json({
+                message: 'Cannot Update Error'
+              });
+            }else{
+              res.send("Updated");
+            }
+          });               
+        }else{
+           return res.status(404).json({
+            message: 'Auth Error'
+          });
+        }
+      }
+  });
+});
+app.delete("/deleteById/:id/remove",isLoggedIn,function(req,res){
+    //console.log(req.params.id);
+    task_history.findById(req.params.id, function(error, task) {
+      if(!task) {
+        return res.status(404).json({
+          message: 'Course with id ' + id + ' can not be found.'
+        });
+      }else{
+        if(task.uname===req.user.name){
+          task_history.findByIdAndRemove(req.params.id,function(err,resp){
+            if(!err){
+               res.send("Deleted..!");
+            }else{
+               res.send("Cannot Delete");
+            }
+          })
+        }else{
+            res.send("Auth error on  Delete");
+        }
+      }
+    });
+
+    });
 function isLoggedIn(req, res, next) {
 
     // if user is authenticated in the session, carry on 
     if (req.isAuthenticated())
         return next();
-
     // if they aren't redirect them to the home page
     res.render('login.jade', {error:'Please Login to view this page'});
 }
@@ -154,30 +213,7 @@ passport.use('local-login', new LocalStrategy({
       }
   });
   }));
-/*app.post('/loginService', function (req, resp) {
-  console.log(req.body);
-  
-  console.log(crypted);
-  User.find({name:req.body.name,password:crypted},function(err,users){
-    if(err){
-      resp.send("<span style='color:red;'>Someting went wrong please connect admin</span>");
-    }else{
 
-      if(users.length>0){
-           var options = {
-              maxAge: 1000 * 60 * 15, // would expire after 15 minutes
-              httpOnly: true
-          }
-          resp.cookie('setAuth', 'true', options); 
-       //resp.send("<span style='color:green;'>Login success!!</span>");   
-     resp.redirect(301,"/getTab");
-      }else{
-       resp.send("<span style='color:red;'>Login Failed <br>Username or password is invaild</span>");
-      }
-    }
-    
-  })
-});*/
 
 app.post('/loginService',passport.authenticate('local-login', {
     successRedirect : '/getTab', // redirect to the secure profile section
@@ -191,7 +227,7 @@ app.listen(3002,function(){
     db = mongoose.connection;
     db.on('error', console.error.bind(console, 'connection error:'));
     db.once('open', function() {
-      console.log("Connect to mongo");
+      console.log("Connected to mongo..");
     });
 });
 console.log("server is running");

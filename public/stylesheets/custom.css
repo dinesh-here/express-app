@@ -21,3 +21,35 @@
 .addforclose{
 	margin: 0 10px;
 }
+.fc-event-container{
+	cursor: pointer;
+}
+.fc-time{
+	display: none;
+}
+select{
+	display: block;
+}
+#modal1,#modal2{
+	width: 80%;
+	max-height: 85%;
+}
+.side-nav-list ul li{
+	margin-bottom: 5px;
+}
+.side-nav-list ul a{
+	display: block;
+	padding: 5px;
+}
+.brand-logo{
+	position: relative;
+	float: left;
+}
+.searchForm{
+	float: left;
+	margin-left: 25%;
+	width: 60%;
+}
+.searchForm i{
+	font-size: 22px;
+}

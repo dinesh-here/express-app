@@ -1,0 +1,25 @@
+form(class="col s12 addnewform",method="post",ng-submit="submit_task()")
+	.input-field.col.s12
+		input(id="subid",type="text",class="validate",required,name="subid",ng-model="formData.subid")
+		label(for="subid") SubID
+	.input-field.col.s12
+		select(id="tasktype",name="tasktype",ng-model="formData.tasktype")
+			option(value="ticket") Ticket
+			option(value="email") Email
+	.input-field.col.s12
+		input(id="taskdate",type="date",class="validate",required,name="taskdate")
+	.input-field.col.s12
+		input(id="firmurl",type="url",class="validate",required,name="firmurl",ng-model="formData.furl")
+		label(for="firmurl") Firm URL
+	.input-field.col.s12
+		input(id="firmname",type="text",class="validate",required,name="firmname",ng-model="formData.fname")
+		label(for="firmname") Firm Name
+	.input-field.col.s12
+		input(id="days",type="number",class="validate",required,name="days",value=0,ng-model="formData.days")
+		label(for="mins") days
+	.input-field.col.s12
+		input(id="mins",type="number",class="validate",required,name="mins",ng-model="formData.mins")
+		label(for="mins") mins
+	.input-field.col.s12
+		input(id="notes",type="textarea",class="validate textcls",required,name="notes",length="120",ng-model="formData.notes")
+	input(type="submit",class="btn waves-effect waves-light",value="Submit")

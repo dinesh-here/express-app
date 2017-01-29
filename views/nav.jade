@@ -1,7 +1,14 @@
 .navbar-fixed
 	nav
 		.nav-wrapper
-			a(class="brand-logo") Menu
+			a(class="brand-logo") EFG App
+			if(user)
+				if(user.adminUser)
+					form.red.lighten-3.searchForm
+						.input-field
+							input#search(type='search')
+							label(for='search'): i.fa.fa-search
+							i.mdi-navigation-close.close
 			ul(class="right hide-on-med-and-down")
 				if(user)
 					li: a(href="/logout") Logout
