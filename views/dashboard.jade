@@ -8,10 +8,11 @@ body
 					div(class="side-nav-list")
 						h5 Welcome #{user.name}
 						ul
-							li: a About
+							li: a(href="/getTab") Add/Update Task
 							if(user.adminUser)
-								li: a(href="/adminReport") Report
+								li: a(href="/adminReport") Complete Report
+								li: a(href="/myReport") My Task History
 							else
-								li: a my Report
+								li: a(href="/myReport") My Task History
 			div(class="col s9")
 				block dashboardData

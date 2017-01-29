@@ -1,0 +1,28 @@
+extends dashboard
+
+body(ng-app="reportApp")
+	block dashboardData
+		div(ng-controller="reportCtrl")
+			input(type="text",ng-model="search",placeholder="Search with any Keyword")
+			table(class="responsive-table")
+				thead
+					tr
+						th Date
+						th Task Type
+						th Sub id
+						th Firm Name
+						th Firm URL
+						th Days
+						th Mins
+						th Notes
+				tbody
+					tr(ng-repeat="task in reportData|orderBy:'-date'|filter:search")
+						td {{task.date}}
+						td {{task.tasktype}}
+						td {{task.subid}}
+						td {{task.fname}}
+						td: a(href="{{task.furl}}",target="_blank") {{task.furl}}
+						td {{task.days}}
+						td {{task.mins}}
+						td {{task.notes}}
+		script(src="./javascripts/report.js")

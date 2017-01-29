@@ -49,6 +49,7 @@ select{
 	float: left;
 	margin-left: 25%;
 	width: 60%;
+	display: none;
 }
 .searchForm i{
 	font-size: 22px;

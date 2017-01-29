@@ -17,6 +17,13 @@ html
             div(class="card-panel red lighten-5",id="card-alert")
               div(class="card-content red-text")
                 p=error
+    if (succ && succ.length > 0)
+      div(class="container")
+        div(class="row")
+          div(class="col s6 offset-s4")
+            div(class="card-panel green lighten-5",id="card-alert")
+              div(class="card-content green-text")
+                p=succ
     else
     block content
   script(src='./lib/materialize.min.js')

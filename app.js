@@ -51,10 +51,14 @@ app.get("/register",function(req,res){
 });
 
 app.get("/getTab",isLoggedIn,function (req,res) {
-    var today=new Date();
-    today=(today.getMonth() + 1) + '/' + today.getDate() + '/' +  today.getFullYear();
-        res.render("calenderView.jade",{user:req.user,date:today});
+        res.render("calenderView.jade",{user:req.user});
 });  
+app.get("/myReport",isLoggedIn,function (req,res) {
+        res.render("singleReport.jade");
+});  
+app.get("/adminReport",isLoggedIn,function (req,res) {
+        res.render("fullReport.jade");
+}); 
 app.get("/getTaskList",isLoggedIn,function(req,res){
   task_history.find({uname:req.user.name},function(err,docs){
     var events=[];
@@ -66,6 +70,28 @@ app.get("/getTaskList",isLoggedIn,function(req,res){
     } 
     else{
       console.log(err);
+    }
+  });
+});
+app.get("/getmytasklist",isLoggedIn,function(req,res){
+  task_history.find({uname:req.user.name},function(err,docs){
+    var events=[];
+     if (!err){ 
+      res.send(docs);
+    } 
+    else{
+      res.send("Cannot Read docs");
+    }
+  });
+});
+app.get("/getalltask",isAdmin,function(req,res){
+  task_history.find({},function(err,docs){
+    var events=[];
+     if (!err){ 
+      res.send(docs);
+    } 
+    else{
+      res.send("Cannot Read docs");
     }
   });
 });
@@ -95,7 +121,7 @@ app.post('/postDB', function (req, resp) {
       console.log(err);
     }else{
       console.log('User saved successfully!');
-      resp.send('Added');
+      resp.render('login.jade', {succ:'Registration completed successfully.! Please login '});
     }
   });
 });
@@ -188,6 +214,14 @@ function isLoggedIn(req, res, next) {
         return next();
     // if they aren't redirect them to the home page
     res.render('login.jade', {error:'Please Login to view this page'});
+}
+function isAdmin(req, res, next) {
+
+    // if user is authenticated in the session, carry on 
+    if (req.isAuthenticated()&&app.locals.user.adminUser===1)
+        return next();
+    // if they aren't redirect them to the home page
+    res.status(403).send("Auth Error");
 }
 passport.use('local-login', new LocalStrategy({
     usernameField : 'name',
