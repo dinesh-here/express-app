@@ -207,6 +207,21 @@ app.delete("/deleteById/:id/remove",isLoggedIn,function(req,res){
     });
 
     });
+app.get("/getUserList",isAdmin,function(req,res){
+  console.log(req.query.us);
+  User.find({name:{$regex : "^" + req.query.us}},{name:1,_id:0},function(err,list){
+    if(err){
+            var da={};
+      console.log(err);
+      res.send(da);
+    }else{
+      var da={};
+      list.forEach(function(el){console.log(da[el.name]=null);});
+      console.log(da);
+      res.send(da);
+    }
+  });
+});
 function isLoggedIn(req, res, next) {
 
     // if user is authenticated in the session, carry on 

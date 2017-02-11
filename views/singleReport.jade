@@ -3,7 +3,10 @@ extends dashboard
 body(ng-app="reportApp")
 	block dashboardData
 		div(ng-controller="reportCtrl")
-			input(type="text",ng-model="search",placeholder="Search with any Keyword")
+			.row
+				input(type="text",ng-model="search",placeholder="Search with any Keyword",class="col s8")
+				a(class="waves-effect waves-light btn col s4") Advance Search
+			include filterForm
 			table(class="responsive-table")
 				thead
 					tr
