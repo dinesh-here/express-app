@@ -16,6 +16,7 @@ body(ng-app="reportApp")
 						th Days
 						th Mins
 						th Notes
+						th EFG
 				tbody
 					tr(ng-repeat="task in reportData|orderBy:'-date'|filter:search")
 						td {{task.date}}
@@ -27,4 +28,6 @@ body(ng-app="reportApp")
 						td {{task.days}}
 						td {{task.mins}}
 						td {{task.notes}}
+						td {{task.efg}}
+		script(type="text/javascript",src="http://code.angularjs.org/1.0.1/angular-resource-1.0.1.js")
 		script(src="./javascripts/report.js")

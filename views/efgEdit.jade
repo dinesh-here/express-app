@@ -1,0 +1,31 @@
+extends dashboard
+
+body(ng-app="reportApp")
+	block dashboardData
+		div(ng-controller="efgEditor")
+			div(class="col s8")
+				input(type="date",class="datepicker",id="searchDate",placeholder="Search Date")
+			div(class="col s4")
+				button(class="btn waves-effect waves-light",ng-click="searchByDate()") Search
+			table
+				thead
+					th Dev
+					th Sub ID
+					th Type
+					th Days
+					th mins
+					th Firm Name
+					th EFG
+				tbody
+					tr(ng-repeat="task in reportData")
+						td {{task.uname}}
+						td {{task.subid}}
+						td {{task.tasktype}}
+						td {{task.days}}
+						td {{task.mins}}
+						td {{task.fname}}
+						td: input(type="text",ng-model="task.efg")
+						td: button(ng-click="updateEFG(task._id,task.efg)",class="btn waves-effect waves-light") Update
+						td: button(class="btn waves-effect waves-light",ng-click="deleteTask(task._id)") Delete
+		script(type="text/javascript",src="http://code.angularjs.org/1.0.1/angular-resource-1.0.1.js")
+		script(src="./javascripts/report.js")

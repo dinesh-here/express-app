@@ -84,17 +84,7 @@ app.get("/getmytasklist",isLoggedIn,function(req,res){
     }
   });
 });
-app.get("/getalltask",isAdmin,function(req,res){
-  task_history.find({},function(err,docs){
-    var events=[];
-     if (!err){ 
-      res.send(docs);
-    } 
-    else{
-      res.send("Cannot Read docs");
-    }
-  });
-});
+
 app.get("/gettaskbyid",isLoggedIn,function(req,res){
     task_history.findById(req.query.did,function(err,doc){
       if(err){
@@ -222,6 +212,98 @@ app.get("/getUserList",isAdmin,function(req,res){
     }
   });
 });
+app.get("/efgeditor",isAdmin,function(req,res){
+  res.render("efgEdit.jade");
+});
+/** Task Admin api Statrs here **/
+
+//Admin api for getting all task list
+app.get("/api/admin/task",isAdmin,function(req,res){
+  task_history.find({},function(err,doc){
+    if(!err){
+      res.send(doc);
+    }else{
+      res.status(500);
+      res.send("Error on Reading Documents!!");
+    }
+  })
+});
+
+//Get Single document for task collection using document id
+app.get("/api/admin/task/:docId",isAdmin,function(req,res){
+    task_history.findById(req.params.docId,function(err,doc){
+      if(!err){
+        res.send(doc);
+      }else{
+        res.status(500);
+        res.send("Error on reading Documents");
+      }
+    })
+});
+
+app.put("/api/admin/task/:docId/",isAdmin,function(req,res){
+  console.log(req.body.name);
+  task_history.findById(req.params.docId, function(error, task) {
+      if(!task) {
+        return res.status(404).json({
+          message: 'Course with id ' + id + ' can not be found.'
+        });
+      }else{
+          var newTask={};
+          newTask.subid=req.body.subid;
+          newTask.tasktype=req.body.tasktype;
+          newTask.furl=req.body.furl;
+          newTask.fname=req.body.fname;
+          newTask.date=req.body.date;
+          newTask.notes=req.body.notes;
+          newTask.mins=req.body.mins;
+          newTask.days=req.body.days;
+          task.update(newTask, function(error, utask) {
+            if(error){
+              return res.status(404).json({
+                message: 'Cannot Update Error'
+              });
+            }else{
+              res.send("Updated");
+            }
+          });               
+        }
+  });
+});
+app.put("/api/admin/task/:docId/updateefg/:efg",isAdmin,function(req,res){
+  var updateData={};
+    updateData.efg=req.params.efg;
+   task_history.findByIdAndUpdate(req.params.docId, updateData, { new: true }, function(error, task) {
+      if(!error){
+        res.send("Updated");
+      }else{
+         res.send("Error");
+      }
+   });
+});
+app.delete("/api/admin/task/:docId",isAdmin,function(req,res){
+   task_history.findByIdAndRemove(req.params.docId,function(err,resp){
+        if(!err){
+           res.send("Deleted..!");
+        }else{
+           res.send("Cannot Delete");
+        }
+   });
+});
+app.get("/api/admin/searchbydate/:time",isAdmin,function(req,res){
+  var unixtmp=req.params.time*1000;
+  var searchDate=new Date(unixtmp);
+  var searchText=("0" + (searchDate.getMonth() + 1)).slice(-2)+"/"+("0" + searchDate.getDate()).slice(-2)+"/"+searchDate.getFullYear();
+  task_history.find({date:searchText},function(err,docs){
+    if(!err){
+      res.send(docs)
+    }else{
+      res.send("Error ");
+    }
+  });
+ 
+});
+
 function isLoggedIn(req, res, next) {
 
     // if user is authenticated in the session, carry on 

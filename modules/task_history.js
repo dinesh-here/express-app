@@ -11,6 +11,7 @@ var task_history = new Schema({
 	mins:Number,
 	days: Number,
 	furl:String,
+	efg:Number,
 	fname:String
 },{ collection : 'task_history' }, { _id: false });
 
