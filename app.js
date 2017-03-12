@@ -60,7 +60,12 @@ app.get("/adminReport",isLoggedIn,function (req,res) {
         res.render("fullReport.jade");
 }); 
 app.get("/getTaskList",isLoggedIn,function(req,res){
-  task_history.find({uname:req.user.name},function(err,docs){
+  console.log(req.query.start);
+  var start_date=new Date(req.query.start);
+  var end_date=new Date(req.query.end);
+  var fromDate=("0" + (start_date.getMonth() + 1)).slice(-2)+"/"+("0" + start_date.getDate()).slice(-2)+"/"+start_date.getFullYear();
+  var  endDate=("0" + (end_date.getMonth() + 1)).slice(-2)+"/"+("0" + end_date.getDate()).slice(-2)+"/"+end_date.getFullYear();
+  task_history.find({uname:req.user.name,date:{$gt:fromDate,$lt:endDate}},function(err,docs){
     var events=[];
      if (!err){ 
       docs.forEach(function(el){
@@ -218,15 +223,21 @@ app.get("/efgeditor",isAdmin,function(req,res){
 /** Task Admin api Statrs here **/
 
 //Admin api for getting all task list
-app.get("/api/admin/task",isAdmin,function(req,res){
-  task_history.find({},function(err,doc){
+app.get("/api/admin/task/",isAdmin,function(req,res){
+  var total_res=0;
+  task_history.count({},function(err,count){
     if(!err){
-      res.send(doc);
+      total_res=count;
+    }
+  })
+  task_history.find({}).skip(req.query.pageno*20).limit(20).exec(function(err,doc){
+    if(!err){
+      res.send({"total":total_res,"doc":doc});
     }else{
       res.status(500);
       res.send("Error on Reading Documents!!");
     }
-  })
+  });
 });
 
 //Get Single document for task collection using document id
@@ -290,11 +301,9 @@ app.delete("/api/admin/task/:docId",isAdmin,function(req,res){
         }
    });
 });
-app.get("/api/admin/searchbydate/:time",isAdmin,function(req,res){
-  var unixtmp=req.params.time*1000;
-  var searchDate=new Date(unixtmp);
-  var searchText=("0" + (searchDate.getMonth() + 1)).slice(-2)+"/"+("0" + searchDate.getDate()).slice(-2)+"/"+searchDate.getFullYear();
-  task_history.find({date:searchText},function(err,docs){
+app.get("/api/admin/searchbydate/:mm/:dd/:yyyy",isAdmin,function(req,res){
+  var searchDate=req.params.mm+"/"+req.params.dd+"/"+req.params.yyyy;
+  task_history.find({date:searchDate},function(err,docs){
     if(!err){
       res.send(docs)
     }else{
