@@ -3,7 +3,7 @@ reportApp.factory("Task", function($resource) {
   return $resource("/api/admin/task/:docId",{docId:'@_docId'},{ 'get':    {method:'GET'},
   'save':   {method:'POST'},
   'update':{method:'PUT'},
-  'query':  {method:'GET', isArray:true},
+  'query':  {method:'GET', isArray:false},
   'remove': {method:'DELETE'},
   'delete': {method:'DELETE'} });
 });
@@ -45,17 +45,37 @@ reportApp.controller('reportCtrlAdmin', ['$scope','$http','$filter',"Task", func
   	console.log("Error");
      $scope.reportData=[{"date":"Auth Error"}];
   });*/
-  Task.query(function(data){
-    $scope.reportData=data;
+  Task.query({pageno:0},function(data){
+    $scope.reportData=data.doc;
+     $scope.total_res=data.total;
+     $scope.page_list=[];
+     for (var i = 0; i < Math.ceil(data.total/20); i++) {
+        $scope.page_list.push({page:i});
+     }
+
+  });
+  $scope.getPage=function(pageno){
+    Task.query({pageno:pageno},function(data){
+    $scope.reportData=data.doc;
+    $scope.page_list=[];
+    $scope.total_res=data.total;
+     for (var i = 0; i < Math.ceil(data.total/20); i++) {
+        $scope.page_list.push({page:i});
+     }
   })
+  };
 }]);
 reportApp.controller('efgEditor', ['$scope','$http','Task', function($scope,$http,Task){
     $scope.searchByDate=function(){
       if($("#searchDate").val()){
-         var unixt=new Date($('.datepicker').val()).getTime() / 1000;
-        $http.get("/api/admin/searchbydate/"+unixt).then(function(res){
+         var searchDate=new Date($("#searchDate").val());
+         var mm=("0" + (searchDate.getMonth() + 1)).slice(-2);
+         var dd=("0" + searchDate.getDate()).slice(-2);
+         
+        var yyyy=searchDate.getFullYear();
+        $http.get("/api/admin/searchbydate/"+mm+"/"+dd+"/"+yyyy).then(function(res){
           $scope.reportData=res.data;
-        })
+        });
       }
     };
     $scope.updateEFG=function(ids,efg){
