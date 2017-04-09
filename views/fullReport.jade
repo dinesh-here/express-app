@@ -3,7 +3,12 @@ extends dashboard
 body(ng-app="reportApp")
 	block dashboardData
 		div(ng-controller="reportCtrlAdmin")
-			input(type="text",ng-model="search",placeholder="Search with any Keyword")
+			a(class="waves-effect waves-light btn",ng-click="showSearch()") Search
+			div(class="search-filter",ng-if="checkSearch()")
+				div(class="chip",ng-repeat="search in searchValue")
+					{{search}}
+				div(class="chip")
+					a(ng-click="getPage(0)") Clear All
 			table(class="responsive-table")
 				thead
 					tr
@@ -18,7 +23,7 @@ body(ng-app="reportApp")
 						th Notes
 						th EFG
 				tbody
-					tr(ng-repeat="task in reportData|orderBy:'-date'|filter:search")
+					tr(ng-repeat="task in reportData|orderBy:'-date'")
 						td {{task.date}}
 						td {{task.uname}}
 						td {{task.tasktype}}
@@ -30,7 +35,22 @@ body(ng-app="reportApp")
 						td {{task.notes}}
 						td {{task.efg}}
 			ul(class="pagination")
-				li(ng-repeat="page in page_list" class="waves-effect")
+				li(ng-repeat="page in page_list",class="waves-effect",ng-if="search_page===false")
 					a(data="{{page.page}}",ng-click="getPage(page.page)") {{ page.page+1}}
+				li(ng-repeat="page in page_list",class="waves-effect",ng-if="search_page===true")
+					a(data="{{page.page}}",ng-click="getSearchPage(page.page)") {{ page.page+1}}
+			.modal#modal3
+				.modal-content
+					include searchFilter
+				.modal-footer
+			div(class="page-loader")
+				div(class="preloader-wrapper big active")
+					div(class="spinner-layer spinner-red-only")
+						div(class="circle-clipper left")
+							div(class="circle")
+						div(class="gap-patch")
+							div(class="circle")
+						div(class="circle-clipper right")
+							div(class="circle")
 		script(type="text/javascript",src="http://code.angularjs.org/1.0.1/angular-resource-1.0.1.js")
 		script(src="./javascripts/report.js")

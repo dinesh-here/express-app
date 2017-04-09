@@ -1,0 +1,11 @@
+form(class="col s12 searchform",method="post",ng-submit="search_task()",ng-init="search.tasktype=uname")
+	.input-field.col.s12
+		span Search By
+		select(id="utasktype",name="utasktype",ng-model="search.tasktype")
+			option(value="uname") Dev Name
+			option(value="subid") Sub ID
+			option(value="date") Date
+			option(value="fname") Firm name
+	.input-field.col.s12
+		input(type="text",ng-model="search.key",placeholder="Enter your query here",class="col s8")
+	input(type="submit",class="btn waves-effect waves-light",value="Search")

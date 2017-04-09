@@ -14,7 +14,7 @@ var Schema = mongoose.Schema;
 app.use(express.static("public"));
 app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({ secret: 'SD123890',cookie:{maxAge:600000}}));
+app.use(session({ secret: 'SD123890',cookie:{maxAge:60000000}}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.set('views', __dirname + '/views');
@@ -225,18 +225,14 @@ app.get("/efgeditor",isAdmin,function(req,res){
 //Admin api for getting all task list
 app.get("/api/admin/task/",isAdmin,function(req,res){
   var total_res=0;
-  task_history.count({},function(err,count){
-    if(!err){
-      total_res=count;
-    }
-  })
-  task_history.find({}).skip(req.query.pageno*20).limit(20).exec(function(err,doc){
-    if(!err){
-      res.send({"total":total_res,"doc":doc});
-    }else{
-      res.status(500);
-      res.send("Error on Reading Documents!!");
-    }
+  var curFind = task_history.find({});
+  curFind.count(function (e, count) {
+     total_res=count;
+     //Create pagination using skip and limit query
+    curFind.skip(req.query.pageno*20).limit(20).exec('find',function(err, result) {
+      res.send({"total":total_res,"doc":result});
+    });
+
   });
 });
 
@@ -311,6 +307,19 @@ app.get("/api/admin/searchbydate/:mm/:dd/:yyyy",isAdmin,function(req,res){
     }
   });
  
+});
+app.post("/api/admin/searchfilter/:pageno/",isAdmin,function(req,res){
+    var query=req.body;
+    console.log(query);
+    var search_result= task_history.find(query);
+    search_result.count(function (e, count) {
+       total_res=count;
+       //Create pagination using skip and limit query
+      search_result.skip(req.params.pageno*10).limit(10).exec('find',function(err, result) {
+        res.send({"total":total_res,"doc":result});
+      });
+
+  });
 });
 
 function isLoggedIn(req, res, next) {
