@@ -1,18 +1,21 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var crypto = require('crypto');
+// var crypto = require('crypto');
 
 var task_history = new Schema({
+	date:String,
 	uname: String,
 	tasktype:String,
 	subid:Number,
-	notes:String,
-	date:String,
-	mins:Number,
-	days: Number,
+	fname:String,
 	furl:String,
-	efg:Number,
-	fname:String
+	process:String,
+	activity:String,
+	notes:String,
+	reason: String,
+	days: Number,
+	mins:Number,
+	efg:Number
 },{ collection : 'task_history' }, { _id: false });
 
 

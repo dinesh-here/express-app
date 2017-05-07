@@ -7,6 +7,44 @@ form(class="col s12 updateForm",method="post",ng-submit="update_task()")
 		select(id="utasktype",name="utasktype",ng-model="updateData.tasktype")
 			option(value="ticket") Ticket
 			option(value="email") Email
+	.input-field.col.s12 
+		select(id="process",name="process",ng-model="updateData.process")
+			option(value="Post Initial Fulfillment Process") Post Initial Fulfillment Process
+			option(value="Initial Fulfillment Process") Initial Fulfillment Process
+			option(value="Product Rework") Product Rework
+			option(value="Defect Tracker") Defect Tracker
+			option(value="Defect Tracker Capability Process") Defect Tracker Capability Process
+			option(value="Rework capability Process") Rework capability Process
+			option(value="Firmsite Refresh Fulfulliment") Firmsite Refresh Fulfulliment
+	.input-field.col.s12 
+		select(id="activity",name="activity",ng-model="updateData.activity")
+			option(value="Complete Development Work") Complete Development Work	
+			option(value="Complete Development Rework") Complete Development Rework
+			option(value="Complete Development") Complete Development 
+			option(value="Complete Development FED") Complete Development FED
+			option(value="Resolve QA Preview Defect Development") Resolve QA Preview Defect Development
+			option(value="Publish Landing Page") Publish Landing Page
+			option(value="Complete FED Rework") Complete FED Rework
+			option(value="Resolve Defects - Development") Resolve Defects - Development
+			option(value="Resolve QA Live Defects") Resolve QA Live Defects
+	.input-field.col.s12 
+		select(id="reason",name="reason",ng-model="updateData.reason")
+			option(value="FS3/FS4/SA + PPC") FS3/FS4/SA + PPC
+			option(value="FS3/FS4/SA + PPC + Blog") FS3/FS4/SA + PPC + Blog
+			option(value="PPC") PPC
+			option(value="PPC V3") PPC V3
+			option(value="FS3/FS4/SA + Blog") FS3/FS4/SA + Blog
+			option(value="Lengthy Rework") Lengthy Rework
+			option(value="Blog") Blog
+			option(value="Carryover") Carryover
+			option(value="Complete Design Change") Complete Design Change
+			option(value="Multiple Request") Multiple Request
+			option(value="Backup Developer") Backup Developer
+			option(value="Standalone Blog") Standalone Blog
+			option(value="Training") Training
+			option(value="No Ticket - New Site Development") No Ticket - New Site Development
+			option(value="Other tasks") Other tasks
+
 	.input-field.col.s12
 		input(id="utaskdate",type="date",class="validate updatefil",required,name="utaskdate")
 	.input-field.col.s12

@@ -19,9 +19,12 @@ body(ng-app="reportApp")
 						th Sub id
 						th Firm Name
 						th Firm URL
+						th Process
+						th Activity
+						th Notes
+						th Reason
 						th Days
 						th Mins
-						th Notes
 						th EFG
 				tbody
 					tr(ng-repeat="task in reportData|orderBy:'-date'")
@@ -31,6 +34,10 @@ body(ng-app="reportApp")
 						td {{task.subid}}
 						td {{task.fname}}
 						td: a(href="{{task.furl}}",target="_blank") {{task.furl}}
+						th {{task.process}}
+						th {{task.activity}}
+						td {{task.notes}}
+						td {{task.reason}}
 						td {{task.days}}
 						td {{task.mins}}
 						td {{task.notes}}

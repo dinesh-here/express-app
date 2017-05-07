@@ -11,19 +11,25 @@ body(ng-app="reportApp")
 				thead
 					th Dev
 					th Sub ID
-					th Type
-					th Days
-					th mins
 					th Firm Name
+					th Type
+					th Process
+					th Activity
+					th Reason
+					th Days
+					th Mins
 					th EFG
 				tbody
 					tr(ng-repeat="task in reportData")
 						td {{task.uname}}
 						td {{task.subid}}
+						td {{task.fname}}
 						td {{task.tasktype}}
+						th {{task.process}}
+						th {{task.activity}}
+						th {{task.reason}}
 						td {{task.days}}
 						td {{task.mins}}
-						td {{task.fname}}
 						td: input(type="text",ng-model="task.efg")
 						td: button(ng-click="updateEFG(task._id,task.efg)",class="btn waves-effect waves-light") Update
 						td: button(class="btn waves-effect waves-light",ng-click="deleteTask(task._id)") Delete
