@@ -383,7 +383,7 @@ app.post('/loginService',passport.authenticate('local-login', {
 
 app.listen(3002,function(){
   console.log("connecting..");
-  mongoose.connect('mongodb://test:test@ds127928.mlab.com:27928/selvadb');
+  mongoose.connect('mongodb://localhost/myapp');
     db = mongoose.connection;
     db.on('error', console.error.bind(console, 'connection error:'));
     db.once('open', function() {
