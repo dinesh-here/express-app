@@ -81,6 +81,7 @@ $scope.search_query={};
         $scope.reportData=res.data.doc;
         $('#modal3').modal('close');
          $scope.page_list=[];
+         $scope.total_efg=res.data.efg;
           $scope.total_res=res.data.total;
            for (var i = 0; i < Math.ceil(res.data.total/10); i++) {
               $scope.page_list.push({page:i});
@@ -96,6 +97,7 @@ $scope.search_query={};
         $('#modal3').modal('close');
          $scope.page_list=[];
           $scope.total_res=res.data.total;
+          $scope.total_efg=res.data.efg;
            for (var i = 0; i < Math.ceil(res.data.total/10); i++) {
               $scope.page_list.push({page:i});
            }

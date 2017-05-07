@@ -312,14 +312,25 @@ app.post("/api/admin/searchfilter/:pageno/",isAdmin,function(req,res){
     var query=req.body;
     console.log(query);
     var search_result= task_history.find(query);
-    search_result.count(function (e, count) {
-       total_res=count;
-       //Create pagination using skip and limit query
-      search_result.skip(req.params.pageno*10).limit(10).exec('find',function(err, result) {
-        res.send({"total":total_res,"doc":result});
-      });
+    var total_efg=0;
+    task_history.aggregate([{ $match: query },{ $group: { _id: null,   totalEfg: { $sum: "$efg"  }}}],function (err, result) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        console.log(result);
+        total_efg=result[0].totalEfg;
+          search_result.count(function (e, count) {
+             total_res=count;
+             //Create pagination using skip and limit query
+            search_result.skip(req.params.pageno*10).limit(10).exec('find',function(err, result) {
+              res.send({"total":total_res,"doc":result,"efg":total_efg});
+            });
 
-  });
+        });
+    console.log(total_efg);
+    });
+
 });
 
 function isLoggedIn(req, res, next) {
@@ -372,7 +383,7 @@ app.post('/loginService',passport.authenticate('local-login', {
 
 app.listen(3002,function(){
   console.log("connecting..");
-  mongoose.connect('mongodb://localhost/students');
+  mongoose.connect('mongodb://test:test@ds127928.mlab.com:27928/selvadb');
     db = mongoose.connection;
     db.on('error', console.error.bind(console, 'connection error:'));
     db.once('open', function() {
